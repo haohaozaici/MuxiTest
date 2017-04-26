@@ -37,7 +37,6 @@ public class MainActivity extends AppCompatActivity {
 
         //setup view
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        mRecyclerView.setFocusable(false);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mAdapter = new Adapter(this);
         mRecyclerView.setAdapter(mAdapter);
@@ -55,10 +54,8 @@ public class MainActivity extends AppCompatActivity {
             }
             setting.setFirstRun(false);
             setting.saveSetting();
-            updateNotes();
         }
 
-        // mNoteQuery = mNoteDao.queryBuilder().build();
         updateNotes();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -93,8 +90,21 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void updateNotes() {
-        List<Note> notes = mNoteDao.loadAll();
-        mAdapter.setItem(notes);
+        List<Note> unCheckedList = mNoteDao.queryBuilder()
+            .where(NoteDao.Properties.IsChecked.eq(false))
+            .orderAsc(NoteDao.Properties.Id)
+            .list();
+
+        List<Note> checkedList = mNoteDao.queryBuilder()
+            .where(NoteDao.Properties.IsChecked.eq(true))
+            .orderAsc(NoteDao.Properties.Id)
+            .list();
+
+        List<Note> all = new ArrayList<>();
+        all.addAll(unCheckedList);
+        all.addAll(checkedList);
+
+        mAdapter.setItem(all);
     }
 
 
