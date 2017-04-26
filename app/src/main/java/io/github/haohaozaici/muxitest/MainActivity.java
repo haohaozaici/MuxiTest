@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
 
         List<Note> checkedList = mNoteDao.queryBuilder()
             .where(NoteDao.Properties.IsChecked.eq(true))
-            .orderAsc(NoteDao.Properties.Id)
+            .orderAsc(NoteDao.Properties.MDate)
             .list();
 
         List<Note> all = new ArrayList<>();
